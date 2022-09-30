@@ -3,3 +3,34 @@
 @tailwind components;
 /* purgecss end ignore */
 @tailwind utilities;
+
+a {
+  position: relative;
+}
+
+a:after {
+  content: '';
+  position: absolute;
+  bottom: -.2em;
+  left: 50%;
+  right: 50%;
+  height: 1px;
+  background: currentColor; 
+  transition: all ease .2s;
+} 
+
+a:hover:after {
+  left: 0;
+  right: 0;
+  height: 2px;
+} 
+
+a:before {
+  position: absolute;
+  transform: translateX(-100%);
+  left: -10px;
+  color: #eee;
+  opacity: .3;
+  font-weight: 100;
+  font-size: .8em;
+}
