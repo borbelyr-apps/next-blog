@@ -13,6 +13,9 @@ const AUTHOR_UPDATED_QUERY = /* groq */ `
     "slug": *[_type == "post" && references(^._id)].slug.current
   }["slug"][]`
 const POST_UPDATED_QUERY = /* groq */ `*[_type == "post" && _id == $id].slug.current`
+const CATEGORY_UPDATED_QUERY = /* groq */ `*[_type == "category" && _id == $id] {
+  "slug": *[_type == "post" && references(^._id)].slug.current
+}["slug"][]`
 
 const getQueryForType = (type) => {
   switch (type) {
@@ -20,6 +23,8 @@ const getQueryForType = (type) => {
       return AUTHOR_UPDATED_QUERY
     case 'post':
       return POST_UPDATED_QUERY
+    case 'category': 
+      return CATEGORY_UPDATED_QUERY
     default:
       throw new TypeError(`Unknown type: ${type}`)
   }
@@ -63,7 +68,7 @@ export default async function revalidate(req, res) {
   log(`Querying post slug for _id '${id}', type '${_type}' ..`)
   const slug = await sanityClient.fetch(getQueryForType(_type), { id })
   const slugs = (Array.isArray(slug) ? slug : [slug]).map(
-    (_slug) => `/posts/${_slug}`
+    (_slug) => `/stories/${_slug}`
   )
   const staleRoutes = ['/', ...slugs]
 
