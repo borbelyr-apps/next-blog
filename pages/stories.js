@@ -31,7 +31,8 @@ export default function StoriesPage({ allPosts: initialAllPosts, preview }) {
 }
 
 export async function getStaticProps({ preview = false }) {
-  const allPosts = overlayDrafts(await getClient(preview).fetch(indexQuery))
+  const result = await getClient(preview).fetch(indexQuery)
+  const allPosts = overlayDrafts(result.posts)
   return {
     props: { allPosts, preview },
     // If webhooks isn't setup then attempt to re-generate in 1 minute intervals
