@@ -10,7 +10,7 @@ export default function CategoryPreview({
   return (
     <div key={slug}>
       <div className="mb-5">
-        <CoverImage slug={slug} title={name} image={picture} />
+        <CoverImage slug={slug} title={name} image={picture} part="categories"/>
       </div>
       <h3 className="mb-3 text-3xl leading-snug">
         <Link href={`/categories/${slug}`}>
