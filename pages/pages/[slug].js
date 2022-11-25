@@ -12,6 +12,7 @@ import { urlForImage, usePreviewSubscription } from "../../lib/sanity"
 import { sanityClient, getClient } from "../../lib/sanity.server"
 import Hero from "../../components/hero"
 import TextWithIllustration from "../../components/text-with-illustration"
+import CallToAction from "../../components/call-to-action"
 
 const renderComponent = (component) => {
   switch (component._type) {
@@ -19,6 +20,8 @@ const renderComponent = (component) => {
       return <Hero key={component._key} {...component}/>
     case "textWithIllustration":
       return <TextWithIllustration key={component._key} {...component}/> 
+    case "callToAction":
+      return <CallToAction key={component._key} {...component}/> 
     default:
       console.log("Unknow component: ", component._type);
       break;
