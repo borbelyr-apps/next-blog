@@ -9,7 +9,7 @@ import { getClient, overlayDrafts } from "../lib/sanity.server"
 import Intro from "../components/intro"
 import Categories from "../components/categories"
 
-export default function StoriesPage({ allCategories: initialAllCategories, preview }) {
+export default function CategoriesPage({ allCategories: initialAllCategories, preview }) {
   const { data: allCategories } = usePreviewSubscription(categoriesQuery, {
     initialData: initialAllCategories,
     enabled: preview,

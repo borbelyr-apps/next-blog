@@ -7,14 +7,28 @@ import PostHeader from "../../components/post-header"
 import Layout from "../../components/layout"
 import PostTitle from "../../components/post-title"
 import { CMS_NAME } from "../../lib/constants"
-import { categoryQuery, categorySlugsQuery } from "../../lib/queries"
+import { pageQuery, pageSlugsQuery } from "../../lib/queries"
 import { urlForImage, usePreviewSubscription } from "../../lib/sanity"
 import { sanityClient, getClient } from "../../lib/sanity.server"
+import Hero from "../../components/hero"
+import TextWithIllustration from "../../components/text-with-illustration"
 
-export default function Category({ data = {}, preview }) {
+const renderComponent = (component) => {
+  switch (component._type) {
+    case "hero":
+      return <Hero key={component._key} {...component}/>
+    case "textWithIllustration":
+      return <TextWithIllustration key={component._key} {...component}/> 
+    default:
+      console.log("Unknow component: ", component._type);
+      break;
+  }
+} 
+
+const Page = ({data = {}, preview}) => {
   const router = useRouter()
   const slug = data?.slug
-  const { data: category } = usePreviewSubscription(categoryQuery, {
+  const { data: page } = usePreviewSubscription(pageQuery, {
     params: { slug },
     initialData: data,
     enabled: preview && slug,
@@ -32,13 +46,13 @@ export default function Category({ data = {}, preview }) {
           <>
             <Head>
               <title>
-                {category.name} | Next.js Blog Example with {CMS_NAME}
+                {page.title} | Next.js Blog Example with {CMS_NAME}
               </title>
-              {category.picture?.asset?._ref && (
+              {page.picture?.asset?._ref && (
                 <meta
                   key="ogImage"
                   property="og:image"
-                  content={urlForImage(category.picture)
+                  content={urlForImage(page.picture)
                     .width(1200)
                     .height(627)
                     .fit("crop")
@@ -46,24 +60,16 @@ export default function Category({ data = {}, preview }) {
                 />
               )}
             </Head>
-            <PostHeader
-              title={`${category.name}.`}
-              coverImage={category.picture}
-            />
-            <p className = "text-xl">{category.description}</p>
-            <hr className="border-accent-2 mt-8 mb-14" />
-            {category.posts.length > 0 && (
-              <MoreStories posts={category.posts} showTitle={false}/>
-            )}
+            {page.pageBuilder.map((element) => renderComponent(element))}
           </>
         )}
       </Container>
     </Layout>
-  )
-}
+  );
+};
 
 export async function getStaticProps({ params, preview = false }) {
-  const result = await getClient(preview).fetch(categoryQuery, {
+  const result = await getClient(preview).fetch(pageQuery, {
     slug: params.slug,
   })
   console.log('Results: ', result)
@@ -81,9 +87,11 @@ export async function getStaticProps({ params, preview = false }) {
 }
 
 export async function getStaticPaths() {
-  const paths = await sanityClient.fetch(categorySlugsQuery)
+  const paths = await sanityClient.fetch(pageSlugsQuery)
   return {
     paths: paths.map((slug) => ({ params: { slug } })),
     fallback: true,
   }
 }
+
+export default Page;
